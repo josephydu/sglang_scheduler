@@ -55,6 +55,8 @@ class Controller:
     
     # TODO change it to send requests to nodes.
     def round_robin_scheduler(self, input_requests):
+        if len(req) == 0 or len(self.node_list) == 0:
+            return
         for req in input_requests:
             target_node = self.node_list[self.round_robin_counter]
             self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)

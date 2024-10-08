@@ -19,7 +19,8 @@ controller = None
 @app.post("/register_nodes")
 async def register_nodes(nodeInfo: NodeInfo):
     """Register nodes to the controller."""
-    print(nodeInfo)
+    if controller is not None:
+        controller.add_new_node(nodeInfo=nodeInfo)
     return JSONResponse({"message": "Register nodes SUCCESS to the controller."})
 
 @app.post("/handle_request")
