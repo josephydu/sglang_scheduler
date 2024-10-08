@@ -62,21 +62,13 @@ class Controller:
     
     
     # TODO change it to send requests to nodes.
-    async def round_robin_scheduler(self, input_requests):
+    def round_robin_scheduler(self, input_requests):
         if len(input_requests) == 0 or len(self.node_list) == 0:
             return
-        async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
-            for req in input_requests:
-                target_node = self.node_list[self.round_robin_counter]
-                self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
-                try:
-                    json_data = await req.json()
-                    
-                    async with session.post(url=f'http://{target_node.ip}:{target_node.port}/generate',
-                                            json=json_data,
-                                            headers=req.headers) as response:
-                        response.raise_for_status()
-                        response_data = await response.json()
-                        print(response_data)
-                except Exception:
-                    pass
+        for req in input_requests:
+            target_node = self.node_list[self.round_robin_counter]
+            self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
+            json_data = req.json()
+            requests.post(url=f'http://{target_node.ip}:{target_node.port}/generate',
+                                    json=json_data,
+                                    headers=req.headers)
