@@ -1,9 +1,10 @@
 from enum import Enum, auto
 import zmq  
+
 import dataclasses
 from typing import List, Optional, Union
 from fastapi import FastAPI, File, Form, Request, UploadFile
-
+from io_struct import NodeInfo
 
 @dataclasses.dataclass
 class PortArgs:
@@ -34,10 +35,33 @@ class LoadBalanceMethod(Enum):
 
 class Controller:
     def __init__(self, server_args) -> None:
+        self.server_args = server_args
         self.load_balance_method = LoadBalanceMethod.from_str(server_args.load_balance_method)
+
+        self.node_list = []
         
-        context = zmq.contenxt()
-        self.recv_from_nodes = context.socket(zmq.PULL)
+        
+        self.round_robin_counter = 0
+        dispatch_lookup = {
+            LoadBalanceMethod.ROUND_ROBIN: self.round_robin_scheduler
+        }
+        
+        self.dispatching = dispatch_lookup[self.load_balance_method]
+        
+        
+    def add_new_node(self, nodeInfo:NodeInfo):
+        self.node_list.append(nodeInfo)
     
+    
+    # TODO change it to send requests to nodes.
+    def round_robin_scheduler(self, input_requests):
+        for req in input_requests:
+            target_node = self.node_list[self.round_robin_counter]
+            self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
+            
+            req_data = req.json
+            print(f'req_data = {req_data}')
+    # http://localhost:30000/generate
+        
     
     # def recv_register_nodes(self):

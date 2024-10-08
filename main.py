@@ -6,27 +6,15 @@ import uvloop
 import argparse
 from server_args import ServerArgs
 
-from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
-
-
+from controller import Controller
+from io_struct import NodeInfo
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # 允许所有源
-    allow_credentials=True,
-    allow_methods=["*"],  # 允许所有方法
-    allow_headers=["*"],  # 允许所有头
-)
+controller = None
 
-
-class NodeInfo(BaseModel):
-    ip: str
-    port: int
-    gpu_id: int
 
 @app.post("/register_nodes")
 async def register_nodes(nodeInfo: NodeInfo):
@@ -34,6 +22,10 @@ async def register_nodes(nodeInfo: NodeInfo):
     print(nodeInfo)
     return JSONResponse({"message": "Register nodes SUCCESS to the controller."})
 
+@app.post("/handle_request")
+async def handle_request(req: Request):
+    if controller is not None:
+        controller.dispatching(req)
     
 def launch_server(server_args):
     uvicorn.run(
@@ -53,4 +45,7 @@ if __name__ == "__main__":
     args = parser_args.parse_args()
     server_args = ServerArgs.from_cli_args(args)
     print(server_args)
+    
+    controller = Controller(server_args=server_args)
+    
     launch_server(server_args)
