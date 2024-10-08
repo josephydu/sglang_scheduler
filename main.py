@@ -25,9 +25,8 @@ async def register_nodes(nodeInfo: NodeInfo):
 
 @app.post("/handle_request")
 async def handle_request(req: Request):
-    print(req)
     if controller is not None:
-        controller.dispatching(req)
+        controller.dispatching([req])
     
 def launch_server(server_args):
     uvicorn.run(
