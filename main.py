@@ -20,7 +20,7 @@ app.add_middleware(
 @app.post("/register_nodes")
 async def register_nodes(request: Request):
     """Register nodes to the controller."""
-    print(request.json()["ip"])
+    print(request.json())
     return JSONResponse({"message": "Register nodes SUCCESS to the controller."})
 
     
