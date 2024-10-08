@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from controller import Controller
 from io_struct import NodeInfo
+import logging
 
 app = FastAPI()
 
@@ -39,13 +40,19 @@ def launch_server(server_args):
         )
         
     
-    
 if __name__ == "__main__":
     parser_args = argparse.ArgumentParser()
     ServerArgs.add_cli_args(parser_args)
     args = parser_args.parse_args()
     server_args = ServerArgs.from_cli_args(args)
     print(server_args)
+    
+    
+    logging.basicConfig(
+        level=getattr(logging, server_args.log_level.upper()),
+        format="%(message)s",
+    )
+
     
     controller = Controller(server_args=server_args)
     
