@@ -27,9 +27,10 @@ async def register_nodes(nodeInfo: NodeInfo):
     return JSONResponse({"message": "Register nodes SUCCESS to the controller."})
 
 @app.post("/handle_request")
-def handle_request(req: Request):
+async def handle_request(req: Request):
     if controller is not None:
         controller.dispatching([req])
+    
     
 def launch_server(server_args):
     uvicorn.run(
