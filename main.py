@@ -24,7 +24,8 @@ async def register_nodes(nodeInfo: NodeInfo):
     return JSONResponse({"message": "Register nodes SUCCESS to the controller."})
 
 @app.post("/handle_request")
-async def handle_request(req: Request):
+async def handle_request(req):
+    print(req)
     if controller is not None:
         controller.dispatching(req)
     
