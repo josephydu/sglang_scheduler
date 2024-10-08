@@ -6,6 +6,8 @@ from typing import List, Optional, Union
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from io_struct import NodeInfo
 
+import requests
+
 import logging
 logger = logging.getLogger(__name__)
 @dataclasses.dataclass
@@ -64,8 +66,7 @@ class Controller:
             target_node = self.node_list[self.round_robin_counter]
             self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
             
-            req_data = req.json
-            logger.info(f'req_data = {req_data}')
+            requests.post(url=f'http://{target_node.ip}:{target_node.port}/generate', data=req.json)
     # http://localhost:30000/generate
         
     
