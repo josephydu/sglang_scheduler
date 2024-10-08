@@ -67,6 +67,7 @@ class Controller:
             return
         for req in input_requests:
             target_node = self.node_list[self.round_robin_counter]
+            print(target_node.port)
             self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
             json_data = await req.json()
             response = requests.post(
