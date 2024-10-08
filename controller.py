@@ -66,7 +66,7 @@ class Controller:
             target_node = self.node_list[self.round_robin_counter]
             self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
             
-            requests.post(url=f'http://{target_node.ip}:{target_node.port}/generate', data=req.json)
+            requests.post(url=f'http://{target_node.ip}:{target_node.port}/generate', data=req.json())
     # http://localhost:30000/generate
         
     
