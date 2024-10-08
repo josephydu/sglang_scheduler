@@ -12,6 +12,8 @@ from controller import Controller
 from io_struct import NodeInfo
 import logging
 
+import asyncio
+
 app = FastAPI()
 
 controller = None
@@ -27,7 +29,7 @@ async def register_nodes(nodeInfo: NodeInfo):
 @app.post("/handle_request")
 async def handle_request(req: Request):
     if controller is not None:
-        controller.dispatching([req])
+        asyncio.run(controller.dispatching([req]))
     
 def launch_server(server_args):
     uvicorn.run(
