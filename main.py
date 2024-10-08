@@ -26,7 +26,7 @@ app.add_middleware(
 class NodeInfo(BaseModel):
     ip: str
     port: str
-    gpu_id: int
+    gpu_id: str
 
 @app.post("/register_nodes")
 async def register_nodes(nodeInfo: NodeInfo):
