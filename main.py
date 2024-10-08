@@ -17,10 +17,15 @@ app.add_middleware(
 )
 
 
+class NodeInfo:
+    ip: str
+    port: str
+    gpu_id: int
+
 @app.post("/register_nodes")
-def register_nodes(request: Request):
+async def register_nodes(nodeInfo: NodeInfo):
     """Register nodes to the controller."""
-    print(request.json())
+    print(nodeInfo)
     return JSONResponse({"message": "Register nodes SUCCESS to the controller."})
 
     
