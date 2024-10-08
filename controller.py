@@ -6,6 +6,8 @@ from typing import List, Optional, Union
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from io_struct import NodeInfo
 
+import logging
+logger = logging.getLogger(__name__)
 @dataclasses.dataclass
 class PortArgs:
     tokenizer_port: int
@@ -50,6 +52,7 @@ class Controller:
         
         
     def add_new_node(self, nodeInfo:NodeInfo):
+        logger.info(f'{nodeInfo.ip}:{nodeInfo.port} is registered on server..')
         self.node_list.append(nodeInfo)
     
     
@@ -62,7 +65,7 @@ class Controller:
             self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
             
             req_data = req.json
-            print(f'req_data = {req_data}')
+            logger.info(f'req_data = {req_data}')
     # http://localhost:30000/generate
         
     
