@@ -62,13 +62,13 @@ class Controller:
     
     
     # TODO change it to send requests to nodes.
-    def round_robin_scheduler(self, input_requests):
+    async def round_robin_scheduler(self, input_requests):
         if len(input_requests) == 0 or len(self.node_list) == 0:
             return
         for req in input_requests:
             target_node = self.node_list[self.round_robin_counter]
             self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
-            json_data = req.json()
+            json_data = await req.json()
             requests.post(url=f'http://{target_node.ip}:{target_node.port}/generate',
                                     json=json_data,
                                     headers=req.headers)
