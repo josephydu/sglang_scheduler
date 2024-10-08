@@ -5,9 +5,15 @@ import uvicorn
 import uvloop
 import argparse
 from server_args import ServerArgs
+
+from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
+
+
+
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # 允许所有源
@@ -17,7 +23,7 @@ app.add_middleware(
 )
 
 
-class NodeInfo:
+class NodeInfo(BaseModel):
     ip: str
     port: str
     gpu_id: int
