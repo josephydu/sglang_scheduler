@@ -69,6 +69,10 @@ class Controller:
             target_node = self.node_list[self.round_robin_counter]
             self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
             json_data = await req.json()
-            requests.post(url=f'http://{target_node.ip}:{target_node.port}/generate',
-                                    json=json_data,
-                                    headers=req.headers)
+            response = requests.post(
+                url=f'http://{target_node.ip}:{target_node.port}/generate',
+                json=json_data,
+                headers=req.headers
+            )
+            # 处理响应
+            print(response.status_code, response.json())
