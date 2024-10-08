@@ -75,4 +75,4 @@ class Controller:
                 headers=req.headers
             )
             # 处理响应
-            logger.info(response.status_code, response.json())
+            logger.info(f"{response.status_code}, {response.json()}")
