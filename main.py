@@ -29,9 +29,19 @@ async def register_nodes(nodeInfo: NodeInfo):
 @app.post("/handle_request")
 async def handle_request(req: Request):
     if controller is not None:
-        await controller.dispatching([req])
+        base_url = "generate"
+        return await controller.dispatching([req], base_url)
+    else:
+        return None
     
-    
+@app.post("/v1/completions")
+async def openai_v1_completions(req: Request):
+    if controller is not None:
+        base_url = "v1/completions"
+        return await controller.dispatching([req], base_url)
+    else:
+        return None 
+
 def launch_server(server_args):
     uvicorn.run(
             app,
