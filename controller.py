@@ -76,4 +76,4 @@ class Controller:
             )
             # 处理响应
             # logger.info(f"{response.status_code}, {response.json()}")
-            return response
+            return response.json()
