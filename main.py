@@ -14,6 +14,8 @@ import logging
 
 import asyncio
 
+import requests
+
 app = FastAPI()
 
 controller = None
@@ -41,6 +43,16 @@ async def openai_v1_completions(req: Request):
         return await controller.dispatching([req], base_url)
     else:
         return None 
+
+@app.get("/get_model_info")
+async def get_model_info():
+    if controller is not None:
+        if len(controller.node_list) != 0:
+            return {
+                "model_path": controller.node_list[0].model_path,
+                "is_generation": controller.node_list[0].is_generation
+            }
+
 
 def launch_server(server_args):
     uvicorn.run(

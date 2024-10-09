@@ -71,19 +71,12 @@ class Controller:
         # if len(input_requests) == 0 or len(self.node_list) == 0:
             # return
         # async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
-        async with aiohttp.ClientSession() as session:
-            for req in input_requests:
-                pay_load = await req.json()
-                target_node = self.node_list[self.round_robin_counter]
-                self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
-                url = f'http://{target_node.ip}:{target_node.port}/{base_url}'
-                async with session.post(url=url, json=pay_load) as response:
-                    if response.status == 200:
-                        # async for chunk in response.content.iter_any():
-                            # print(chunk)
-                        pass
-                    else:
-                        print("Failed to retrieve data:", response.status)
+        for req in input_requests:
+            pay_load = await req.json()
+            target_node = self.node_list[self.round_robin_counter]
+            self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
+            url=f'http://{target_node.ip}:{target_node.port}/{base_url}'
+            print(requests.post(url=url, json=pay_load).content)
             # async with session.post(
                 # url=f'http://{target_node.ip}:{target_node.port}/{base_url}',
                 # json=pay_load) as res:
