@@ -81,3 +81,4 @@ class Controller:
                     else:
                         print("Failed to retrieve data:", response.status)
                         yield b''  # 返回空字节，表示错误或无数据
+        print(self.req_cnt)
