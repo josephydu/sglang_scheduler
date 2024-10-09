@@ -40,7 +40,11 @@ async def handle_request(req: Request):
 async def openai_v1_completions(req: Request):
     if controller is not None:
         base_url = "v1/completions"
-        return await controller.dispatching([req], base_url)
+        async for data_chunk in controller.dispatching([req], base_url):
+            if data_chunk:
+                yield data_chunk
+            else:
+                yield b''
     else:
         return None 
 

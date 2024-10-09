@@ -72,11 +72,10 @@ class Controller:
                 self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
                 url = f'http://{target_node.ip}:{target_node.port}/{base_url}'
                 async with session.post(url, json=pay_load) as response:
-                    # 如果你需要处理响应，可以在这里添加代码
-                    # 例如，打印响应状态或者处理响应数据
-                    print("Status:", response.status)
                     if response.status == 200:
-                        # # 如果你需要处理流式响应
-                        # async for chunk in response.content.iter_any():
-                        #     print(chunk)
-                        pass
+                        # 使用异步生成器产生数据块
+                        async for chunk in response.content.iter_chunked(1024):
+                            yield chunk
+                    else:
+                        print("Failed to retrieve data:", response.status)
+                        yield b''  # 返回空字节，表示错误或无数据
