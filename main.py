@@ -20,6 +20,12 @@ app = FastAPI()
 
 controller = None
 
+async def data_stream(controller, input_requests, base_url):
+    async for data_chunk in controller.dispatching(input_requests, base_url):
+        if data_chunk:
+            yield data_chunk
+        else:
+            yield b''
 
 @app.post("/register_nodes")
 async def register_nodes(nodeInfo: NodeInfo):
@@ -40,11 +46,7 @@ async def handle_request(req: Request):
 async def openai_v1_completions(req: Request):
     if controller is not None:
         base_url = "v1/completions"
-        async for data_chunk in controller.dispatching([req], base_url):
-            if data_chunk:
-                yield data_chunk
-            else:
-                yield b''
+        return StreamingResponse(data_stream(controller=controller, input_requests=[req], base_url=base_url))
 
 @app.get("/get_model_info")
 async def get_model_info():
