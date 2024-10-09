@@ -49,12 +49,12 @@ data = {
 }
 
 # 发送 POST 请求
-response = requests.post(url, json=data, headers=headers, stream=True)
+response = requests.post(url, json=data, headers=headers)
 
-# 打印响应内容
-# 如果是流式响应，可以逐块读取
-if response.ok:
-    for chunk in response.iter_content(chunk_size=1024):
-        print(chunk.decode('utf-8'))
-else:
-    print("Failed to retrieve data:", response.status_code)
+# # 打印响应内容
+# # 如果是流式响应，可以逐块读取
+# if response.ok:
+#     for chunk in response.iter_content(chunk_size=1024):
+#         print(chunk.decode('utf-8'))
+# else:
+#     print("Failed to retrieve data:", response.status_code)

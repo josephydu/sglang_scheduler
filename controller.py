@@ -65,18 +65,17 @@ class Controller:
     
     # TODO change it to send requests to nodes.
     async def round_robin_scheduler(self, input_requests, base_url):
-        # pass
-        # logger.info(input_requests)
-        # logger.info(await input_requests[0].json())
-        # if len(input_requests) == 0 or len(self.node_list) == 0:
-            # return
-        # async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
-        for req in input_requests:
-            pay_load = await req.json()
-            # print(pay_load)
-            # print(pay_load["stream"])
-            target_node = self.node_list[self.round_robin_counter]
-            self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
-            url=f'http://{target_node.ip}:{target_node.port}/{base_url}'
-            requests.post(url=url, json=pay_load, stream=True)
-
+        async with aiohttp.ClientSession() as session:
+            for req in input_requests:
+                pay_load = await req.json()
+                target_node = self.node_list[self.round_robin_counter]
+                self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
+                url = f'http://{target_node.ip}:{target_node.port}/{base_url}'
+                async with session.post(url, json=pay_load) as response:
+                    # 如果你需要处理响应，可以在这里添加代码
+                    # 例如，打印响应状态或者处理响应数据
+                    print("Status:", response.status)
+                    if response.status == 200:
+                        # 如果你需要处理流式响应
+                        async for chunk in response.content.iter_any():
+                            print(chunk)
