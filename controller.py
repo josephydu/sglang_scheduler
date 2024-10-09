@@ -85,7 +85,8 @@ class Controller:
                             async for data in res.content.iter_any():
                                 await response.write(data)
                             await response.write_eof()
-                            return response
+                            # return response
+                            print(response)
                         else:
                             # 处理错误情况
                             return web.Response(status=res.status, text=await res.text())
