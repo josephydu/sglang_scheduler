@@ -72,8 +72,7 @@ class Controller:
                 json_data = await req.json()
                 async with session.post(
                     url=f'http://{target_node.ip}:{target_node.port}/{base_url}',
-                    json=json_data,
-                    headers=req.headers) as res:
+                    json=json_data) as res:
                     pass
                 # 处理响应
                 # logger.info(f"{response}, {response.content}")
