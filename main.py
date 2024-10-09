@@ -28,6 +28,8 @@ async def register_nodes(nodeInfo: NodeInfo):
 
 @app.post("/handle_request")
 async def handle_request(req: Request):
+    request_json = await req.json()
+    print(f'{request_json}')
     if controller is not None:
         base_url = "generate"
         return await controller.dispatching([req], base_url)
