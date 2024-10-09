@@ -12,8 +12,7 @@ api_url_controller = 'http://127.0.0.1:23000/v1/completions'
 headers = {'Authorization': 'Bearer None'}
 
 import requests
-
-print("=============start server request======================================")
-print(requests.post(url=api_url_server, json=payload, headers=headers).content)
 print("=============start controller request======================================")
 print(requests.post(url=api_url_controller, json=payload, headers=headers).content)
+print("=============start server request======================================")
+print(requests.post(url=api_url_server, json=payload, headers=headers).content)

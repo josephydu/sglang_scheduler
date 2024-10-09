@@ -69,13 +69,12 @@ class Controller:
             for req in input_requests:
                 target_node = self.node_list[self.round_robin_counter]
                 self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
-                json_data = await req.json()
-                logger.info(f'json_data={json_data}')
-                async with session.post(
-                    url=f'http://{target_node.ip}:{target_node.port}/{base_url}',
-                    json=json_data) as res:
-                    pass
-                # 处理响应
-                # logger.info(f"{response}, {response.content}")
-                # return response.json()
-                return None
+                json_data = req.content
+                # async with session.post(
+                #     url=f'http://{target_node.ip}:{target_node.port}/{base_url}',
+                #     json=json_data) as res:
+                #     pass
+                # # 处理响应
+                # # logger.info(f"{response}, {response.content}")
+                # # return response.json()
+                # return None
