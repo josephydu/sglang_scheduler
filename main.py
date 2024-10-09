@@ -59,6 +59,7 @@ async def handle_request(batch_req: BatchCompletionRequest):
 @app.post("/v1/completions")
 async def openai_v1_completions(batch_req: Request):
     req_json = await batch_req.json()
+    print(isinstance(req_json, list))
     if not isinstance(req_json, list):
         req_json = [req_json]  # 将单个对象转换为列表
 
