@@ -63,6 +63,7 @@ class Controller:
     
     # TODO change it to send requests to nodes.
     async def round_robin_scheduler(self, input_requests, base_url):
+        logger.info(input_requests)
         # if len(input_requests) == 0 or len(self.node_list) == 0:
             # return
         async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
