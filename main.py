@@ -28,7 +28,7 @@ async def register_nodes(nodeInfo: NodeInfo):
         controller.add_new_node(nodeInfo=nodeInfo)
     return JSONResponse({"message": "Register nodes SUCCESS to the controller."})
 
-@app.post("/handle_request")
+@app.post("/generate")
 async def handle_request(req: Request):
     if controller is not None:
         base_url = "generate"
