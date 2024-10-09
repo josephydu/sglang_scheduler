@@ -76,7 +76,7 @@ class Controller:
             target_node = self.node_list[self.round_robin_counter]
             self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
             url=f'http://{target_node.ip}:{target_node.port}/{base_url}'
-            print(requests.post(url=url, json=pay_load).content)
+            print(requests.post(url=url, json=pay_load, stream=True).content)
             # async with session.post(
                 # url=f'http://{target_node.ip}:{target_node.port}/{base_url}',
                 # json=pay_load) as res:
