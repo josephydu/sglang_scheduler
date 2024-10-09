@@ -36,10 +36,9 @@ async def handle_request(req: Request):
     
 @app.post("/v1/completions")
 async def openai_v1_completions(req: Request):
-    request_json = await req.json()
     if controller is not None:
         base_url = "v1/completions"
-        return controller.dispatching([request_json], base_url)
+        return controller.dispatching([req], base_url)
     else:
         return None 
 
