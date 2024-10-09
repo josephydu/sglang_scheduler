@@ -11,6 +11,7 @@ import requests
 import aiohttp
 import logging
 
+from aiohttp import web
 logger = logging.getLogger(__name__)
 AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(total=6 * 60 * 60)
 @dataclasses.dataclass
@@ -77,7 +78,17 @@ class Controller:
                 async with session.post(
                     url=f'http://{target_node.ip}:{target_node.port}/{base_url}',
                     json=pay_load) as res:
-                    pass
+                        if res.status == 200:
+                            # 创建一个流式响应
+                            response = web.StreamResponse(status=200)
+                            await response.prepare(req)
+                            async for data in res.content.iter_any():
+                                await response.write(data)
+                            await response.write_eof()
+                            return response
+                        else:
+                            # 处理错误情况
+                            return web.Response(status=res.status, text=await res.text())
                 # # 处理响应
                 # # logger.info(f"{response}, {response.content}")
                 # # return response.json()
