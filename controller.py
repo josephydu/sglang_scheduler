@@ -66,8 +66,7 @@ class Controller:
     
     # TODO change it to send requests to nodes.
     async def round_robin_scheduler(self, input_requests, base_url):
-        self.req_cnt += 1
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
             for req in input_requests:
                 pay_load = await req.json()
                 target_node = self.node_list[self.round_robin_counter]
@@ -81,4 +80,3 @@ class Controller:
                     else:
                         print("Failed to retrieve data:", response.status)
                         yield b''  # 返回空字节，表示错误或无数据
-        print(self.req_cnt)
