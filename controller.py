@@ -63,7 +63,8 @@ class Controller:
     
     # TODO change it to send requests to nodes.
     async def round_robin_scheduler(self, input_requests, base_url):
-        logger.info(input_requests)
+        pass
+        # logger.info(input_requests)
         # logger.info(await input_requests[0].json())
         # if len(input_requests) == 0 or len(self.node_list) == 0:
             # return
