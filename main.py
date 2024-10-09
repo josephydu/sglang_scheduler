@@ -56,10 +56,10 @@ async def handle_request(batch_req: BatchCompletionRequest):
         return None
     
 @app.post("/v1/completions")
-async def openai_v1_completions(req: Request):
+async def openai_v1_completions(batch_req: BatchCompletionRequest):
     if controller is not None:
         base_url = "v1/completions"
-        return StreamingResponse(data_stream(controller=controller, input_requests=[req], base_url=base_url))
+        return StreamingResponse(data_stream(controller=controller, input_requests=batch_req, base_url=base_url))
 
 @app.get("/get_model_info")
 async def get_model_info():
