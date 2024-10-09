@@ -45,8 +45,6 @@ async def openai_v1_completions(req: Request):
                 yield data_chunk
             else:
                 yield b''
-    else:
-        return None 
 
 @app.get("/get_model_info")
 async def get_model_info():
