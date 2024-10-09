@@ -56,7 +56,8 @@ async def handle_request(batch_req: BatchCompletionRequest):
         return None
     
 @app.post("/v1/completions")
-async def openai_v1_completions(batch_req: BatchCompletionRequest):
+async def openai_v1_completions(batch_req: Request):
+    print(await batch_req.json())
     if controller is not None:
         base_url = "v1/completions"
         return StreamingResponse(data_stream(controller=controller, input_requests=batch_req, base_url=base_url))
