@@ -6,12 +6,11 @@ from typing import List, Optional, Union
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from io_struct import NodeInfo
 
-import requests
+from fastapi.responses import StreamingResponse
 
 import aiohttp
 import logging
 
-from aiohttp import web
 logger = logging.getLogger(__name__)
 AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(total=6 * 60 * 60)
 @dataclasses.dataclass
@@ -75,20 +74,15 @@ class Controller:
                 target_node = self.node_list[self.round_robin_counter]
                 self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
                 async with session.post(
-                    url=f'http://{target_node.ip}:{target_node.port}/{base_url}',
+                    url=f'http://{target_node["ip"]}:{target_node["port"]}/{base_url}',
                     json=pay_load) as res:
-                        if res.status == 200:
-                            # 创建一个流式响应
-                            response = web.StreamResponse(status=200)
-                            await response.prepare(req)
+                    if res.status == 200:
+                        async def stream_response():
                             async for data in res.content.iter_any():
-                                await response.write(data)
-                            await response.write_eof()
-                            # return response
-                            print(response)
-                        else:
-                            # 处理错误情况
-                            return web.Response(status=res.status, text=await res.text())
+                                yield data
+                        return StreamingResponse(stream_response(), media_type="application/json")
+                    else:
+                        return {"status": res.status, "message": await res.text()}
                 # # 处理响应
                 # # logger.info(f"{response}, {response.content}")
                 # # return response.json()
