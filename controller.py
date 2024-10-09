@@ -57,6 +57,7 @@ class Controller:
         
         self.dispatching = dispatch_lookup[self.load_balance_method]
         
+        self.req_cnt = 0
         
     def add_new_node(self, nodeInfo:NodeInfo):
         logger.info(f'{nodeInfo.ip}:{nodeInfo.port} is registered on server..')
@@ -65,6 +66,7 @@ class Controller:
     
     # TODO change it to send requests to nodes.
     async def round_robin_scheduler(self, input_requests, base_url):
+        self.req_cnt += 1
         async with aiohttp.ClientSession() as session:
             for req in input_requests:
                 pay_load = await req.json()
