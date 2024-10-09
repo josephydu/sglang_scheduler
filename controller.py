@@ -76,6 +76,7 @@ class Controller:
                     # 例如，打印响应状态或者处理响应数据
                     print("Status:", response.status)
                     if response.status == 200:
-                        # 如果你需要处理流式响应
-                        async for chunk in response.content.iter_any():
-                            print(chunk)
+                        # # 如果你需要处理流式响应
+                        # async for chunk in response.content.iter_any():
+                        #     print(chunk)
+                        pass
