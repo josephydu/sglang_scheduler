@@ -74,7 +74,7 @@ class Controller:
                 async with session.post(url, json=pay_load) as response:
                     if response.status == 200:
                         # 使用异步生成器产生数据块
-                        async for chunk in response.content.iter_chunked(1024):
+                        async for chunk in response.content:
                             yield chunk
                     else:
                         print("Failed to retrieve data:", response.status)
