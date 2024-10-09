@@ -76,5 +76,6 @@ class Controller:
                 headers=req.headers
             )
             # 处理响应
-            logger.info(f"{response}, {response.content}")
+            # logger.info(f"{response}, {response.content}")
             # return response.json()
+            return None
