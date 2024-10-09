@@ -11,6 +11,8 @@ from fastapi.responses import StreamingResponse
 import aiohttp
 import logging
 
+import requests
+
 logger = logging.getLogger(__name__)
 AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(total=6 * 60 * 60)
 @dataclasses.dataclass
@@ -68,21 +70,23 @@ class Controller:
         # logger.info(await input_requests[0].json())
         # if len(input_requests) == 0 or len(self.node_list) == 0:
             # return
-        async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
-            for req in input_requests:
-                pay_load = await req.json()
-                target_node = self.node_list[self.round_robin_counter]
-                self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
-                async with session.post(
-                    url=f'http://{target_node.ip}:{target_node.port}/{base_url}',
-                    json=pay_load) as res:
-                    if res.status == 200:
-                        async def stream_response():
-                            async for data in res.content.iter_any():
-                                yield data
-                        return StreamingResponse(stream_response(), media_type="application/json")
-                    else:
-                        return {"status": res.status, "message": await res.text()}
+        # async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
+        for req in input_requests:
+            pay_load = await req.json()
+            target_node = self.node_list[self.round_robin_counter]
+            self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
+            url=f'http://{target_node.ip}:{target_node.port}/{base_url}'
+            print(requests.post(url=url, json=pay_load))
+            # async with session.post(
+                # url=f'http://{target_node.ip}:{target_node.port}/{base_url}',
+                # json=pay_load) as res:
+                # if res.status == 200:
+                    # async def stream_response():
+                        # async for data in res.content.iter_any():
+                            # yield data
+                    # return StreamingResponse(stream_response(), media_type="application/json")
+                # else:
+                    # return {"status": res.status, "message": await res.text()}
                 # # 处理响应
                 # # logger.info(f"{response}, {response.content}")
                 # # return response.json()
