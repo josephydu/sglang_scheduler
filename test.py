@@ -15,4 +15,4 @@ import requests
 print("=============start controller request======================================")
 print(requests.post(url=api_url_controller, json=payload, headers=headers).content)
 print("=============start server request======================================")
-print(requests.post(url=api_url_server, json=payload, headers=headers).content)
+# print(requests.post(url=api_url_server, json=payload, headers=headers).content)
