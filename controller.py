@@ -70,7 +70,7 @@ class Controller:
                 target_node = self.node_list[self.round_robin_counter]
                 self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
                 json_data = await req.json()
-                print(f'json_data={json_data}')
+                logger.info(f'json_data={json_data}')
                 async with session.post(
                     url=f'http://{target_node.ip}:{target_node.port}/{base_url}',
                     json=json_data) as res:
