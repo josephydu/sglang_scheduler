@@ -23,12 +23,13 @@ app = FastAPI()
 
 controller = None
 class CompletionRequest(BaseModel):
-    prompt: str
-    api_url: str
-    prompt_len: int
-    output_len: int
     model: str
-    extra_request_body: Dict[str, Any]
+    prompt: str
+    temperature: float
+    best_of: float
+    max_tokens: int
+    stream: bool
+    ignore_eos: bool
 
 
 class BatchCompletionRequest(BaseModel):
@@ -56,8 +57,8 @@ async def handle_request(batch_req: BatchCompletionRequest):
         return None
     
 @app.post("/v1/completions")
-async def openai_v1_completions(batch_req: Request):
-    print(await batch_req.json())
+async def openai_v1_completions(batch_req: BatchCompletionRequest):
+    # print(await batch_req.json())
     if controller is not None:
         base_url = "v1/completions"
         return StreamingResponse(data_stream(controller=controller, input_requests=batch_req, base_url=base_url))
