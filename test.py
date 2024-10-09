@@ -13,6 +13,15 @@ headers = {'Authorization': 'Bearer None'}
 
 import requests
 print("=============start controller request======================================")
-print(requests.post(url=api_url_controller, json=payload, headers=headers, stream=True).content)
+# 发送 POST 请求
+response = requests.post(api_url_controller, json=payload, headers=headers, stream=True)
+
+# 打印响应内容
+# 如果是流式响应，可以逐块读取
+if response.ok:
+    for chunk in response.iter_content(chunk_size=1024):
+        print(chunk.decode('utf-8'))
+else:
+    print("Failed to retrieve data:", response.status_code)
 print("=============start server request======================================")
 # print(requests.post(url=api_url_server, json=payload, headers=headers).content)
