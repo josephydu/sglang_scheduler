@@ -73,21 +73,9 @@ class Controller:
         # async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
         for req in input_requests:
             pay_load = await req.json()
-            target_node = self.node_list[self.round_robin_counter]
-            self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
-            url=f'http://{target_node.ip}:{target_node.port}/{base_url}'
-            print(requests.post(url=url, json=pay_load).content)
-            # async with session.post(
-                # url=f'http://{target_node.ip}:{target_node.port}/{base_url}',
-                # json=pay_load) as res:
-                # if res.status == 200:
-                    # async def stream_response():
-                        # async for data in res.content.iter_any():
-                            # yield data
-                    # return StreamingResponse(stream_response(), media_type="application/json")
-                # else:
-                    # return {"status": res.status, "message": await res.text()}
-                # # 处理响应
-                # # logger.info(f"{response}, {response.content}")
-                # # return response.json()
-                # return None
+            print(pay_load["stream"])
+            # target_node = self.node_list[self.round_robin_counter]
+            # self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
+            # url=f'http://{target_node.ip}:{target_node.port}/{base_url}'
+            # requests.post(url=url, json=pay_load, stream=True)
+
