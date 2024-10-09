@@ -8,6 +8,9 @@ from server_args import ServerArgs
 
 from fastapi.middleware.cors import CORSMiddleware
 
+from pydantic import BaseModel
+from typing import List, Dict, Any
+
 from controller import Controller
 from io_struct import NodeInfo
 import logging
@@ -19,7 +22,17 @@ import requests
 app = FastAPI()
 
 controller = None
+class CompletionRequest(BaseModel):
+    prompt: str
+    api_url: str
+    prompt_len: int
+    output_len: int
+    model: str
+    extra_request_body: Dict[str, Any]
 
+
+class BatchCompletionRequest(BaseModel):
+    requests: List[CompletionRequest]
 async def data_stream(controller, input_requests, base_url):
     async for data_chunk in controller.dispatching(input_requests, base_url):
         if data_chunk:
@@ -35,10 +48,10 @@ async def register_nodes(nodeInfo: NodeInfo):
     return JSONResponse({"message": "Register nodes SUCCESS to the controller."})
 
 @app.post("/generate")
-async def handle_request(req: Request):
+async def handle_request(batch_req: BatchCompletionRequest):
     if controller is not None:
         base_url = "generate"
-        return await controller.dispatching([req], base_url)
+        return await controller.dispatching(batch_req, base_url)
     else:
         return None
     

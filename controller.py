@@ -68,7 +68,7 @@ class Controller:
     async def round_robin_scheduler(self, input_requests, base_url):
         async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
             for req in input_requests:
-                pay_load = await req.json()
+                pay_load = req.dict()
                 target_node = self.node_list[self.round_robin_counter]
                 self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
                 url = f'http://{target_node.ip}:{target_node.port}/{base_url}'
