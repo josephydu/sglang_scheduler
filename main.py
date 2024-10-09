@@ -59,11 +59,11 @@ async def handle_request(batch_req: BatchCompletionRequest):
 @app.post("/v1/completions")
 async def openai_v1_completions(batch_req: Request):
     req_json = await batch_req.json()
-    print(isinstance(req_json, list))
-    if not isinstance(req_json, list):
-        req_json = [req_json]  # 将单个对象转换为列表
+    # print(isinstance(req_json, list))
+    # if not isinstance(req_json, list):
+        # req_json = [req_json]  # 将单个对象转换为列表
 
-    requests = [CompletionRequest(**item) for item in req_json]
+    requests = [CompletionRequest(**req_json)]
     if controller is not None:
         base_url = "v1/completions"
         return StreamingResponse(data_stream(controller=controller, input_requests=requests, base_url=base_url))
