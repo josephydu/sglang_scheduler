@@ -72,7 +72,7 @@ class Controller:
             for req in input_requests:
                 target_node = self.node_list[self.round_robin_counter]
                 self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
-                pay_load = await req.json()
+                pay_load = req.json()
                 print(f'[controller]{pay_load}')
                 async with session.post(
                     url=f'http://{target_node.ip}:{target_node.port}/{base_url}',
