@@ -73,6 +73,7 @@ class Controller:
         # async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
         for req in input_requests:
             pay_load = await req.json()
+            print(pay_load)
             print(pay_load["stream"])
             # target_node = self.node_list[self.round_robin_counter]
             # self.round_robin_counter = (self.round_robin_counter + 1) % len(self.node_list)
