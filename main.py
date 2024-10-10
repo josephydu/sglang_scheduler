@@ -9,7 +9,8 @@ from server_args import ServerArgs
 from fastapi.middleware.cors import CORSMiddleware
 
 from pydantic import BaseModel
-from typing import List, Dict, Any
+from typing import List, Dict, Any, List, Optional
+
 
 from controller import Controller
 from io_struct import NodeInfo
@@ -32,9 +33,27 @@ class CompletionRequest(BaseModel):
     max_tokens: int
     stream: bool
     ignore_eos: bool
-    
+
+class SamplingParams(BaseModel):
+    skip_special_tokens: bool
+    spaces_between_special_tokens: bool
+    max_new_tokens: int
+    min_new_tokens: int
+    stop: List[str]
+    stop_token_ids: List[int]
+    temperature: float
+    top_p: float
+    top_k: int
+    min_p: float
+    frequency_penalty: float
+    presence_penalty: float
+    ignore_eos: bool
+    regex: Optional[str]
+    json_schema: Optional[str]
+
 class GenerateRequest(BaseModel):
-    pass
+    text: str
+    sampling_params: SamplingParams
 
 
 class BatchCompletionRequest(BaseModel):
@@ -56,9 +75,8 @@ async def register_nodes(nodeInfo: NodeInfo):
 @app.post("/generate")
 async def generate(req: Request):
     req_json = await req.json()
-    print(req_json)
 
-    requests = [CompletionRequest(**req_json)]
+    requests = [GenerateRequest(**req_json)]
     if controller is not None:
         base_url = "generate"
         return await controller.dispatching(requests, base_url)
