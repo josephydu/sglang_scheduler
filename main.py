@@ -79,7 +79,7 @@ async def generate(req: Request):
     requests = [GenerateRequest(**req_json)]
     if controller is not None:
         base_url = "generate"
-        return await controller.dispatching(requests, base_url)
+        return StreamingResponse(data_stream(controller=controller, input_requests=requests, base_url=base_url))
     else:
         return None
     
