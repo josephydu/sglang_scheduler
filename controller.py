@@ -51,11 +51,14 @@ class Controller:
         dispatch_lookup = {
             LoadBalanceMethod.ROUND_ROBIN: self.round_robin_scheduler,
             LoadBalanceMethod.POWER_OF_2_CHOICE: self.power_of_2_choice_scheduler,
+            LoadBalanceMethod.RESOURCES_AWARE: self.resources_aware_scheduler,
         }
         
         self.dispatching = dispatch_lookup[self.load_balance_method]
         
         self.context = zmq.Context(2)
+        
+        self.log_step = 10
         
         
     def add_new_node(self, nodeInfo:NodeInfo):
@@ -74,8 +77,8 @@ class Controller:
         while True:
             try:
                 recv_controller_info_str = recv_controller_info.recv_string(zmq.NOBLOCK)
-                # logger.info(controller_info)
                 if recv_controller_info_str is not None and recv_controller_info_str != "":
+                    logger.info(f'[recv_controller_info_loop]{recv_controller_info_str}')
                     ip, port, avaliable_memory, num_running, num_waitting = recv_controller_info_str.split(",")
                     self.controller_info_dict[f'{ip}:{port}'] = (avaliable_memory, num_running, num_waitting)
             except zmq.Again:
@@ -135,7 +138,67 @@ class Controller:
                         print("Failed to retrieve data:", response.status)
                         yield b''  # 返回空字节，表示错误或无数据
 
-    
+    async def resources_aware_scheduler(self, input_requests, base_url):
+        if input_requests == 0 or self.node_list == 0 or len(self.controller_info_dict) == 0:
+            return 
+        async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
+            for req in input_requests:
+                # power of 2 choice 
+                if len(self.controller_info_dict) == 1:
+                    target_node, infos = next(iter(self.controller_info_dict.items()))
+                else:
+                    available_mem = []
+                    num_reqs_running = []
+                    num_reqs_waiting = []
+                    nodes_list = []
+                    for key, value in self.controller_info_dict.items():
+                        nodes_list.append(key)
+                        available_mem.append(value[0])
+                        num_reqs_running.append(value[1])
+                        num_reqs_waiting.append(value[2])
+
+                    # 判断是否是全部waiting
+                    all_waitting = False
+                    if min(num_reqs_waiting) > 0:
+                        # 最小值都大于0，全部waiting
+                        all_waitting = True
+                    else:
+                        # 最小值都是0， 则全部waiting
+                        all_waitting = False
+                    # 选出不waiting
+                    no_waiting = [1 if waiting == 0 else 0 for waiting in num_reqs_waiting]
+                    if all_waitting:
+                        # 全部waiting，选最小的
+                        ratio = [
+                            run / wait for run, wait in zip(num_reqs_running, num_reqs_waiting)
+                        ]
+                        # run越大 认为后续释放的可能性越多，wait越少，说明后续计算能力更强
+                        min_value = max(ratio)
+                        # 找到所有最小值的索引
+                        min_indices = [i for i, x in enumerate(ratio) if x == min_value]
+                        # 从这些索引中随机选择一个
+                        index = random.choice(min_indices)
+                        # 从waitting最小的找到available最大的
+                    else:
+                        # 选出不waiting的且available mem最大的
+                        # no_waiting 和available做乘法，找最大
+
+                        filter_result = [a * b for a, b in zip(no_waiting, available_mem)]
+                        index = filter_result.index(max(filter_result))
+                    target_node = nodes_list[index]
+
+                url = f'http://{target_node}/{base_url}'
+                
+                
+                pay_load = req.dict()
+                async with session.post(url, json=pay_load) as response:
+                    if response.status == 200:
+                        # 使用异步生成器产生数据块
+                        async for chunk in response.content:
+                            yield chunk
+                    else:
+                        print("Failed to retrieve data:", response.status)
+                        yield b''  # 返回空字节，表示错误或无数据
     def __del__(self):
         for proc in self.recv_controller_procs:
             proc.terminate()
