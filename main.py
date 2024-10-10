@@ -18,7 +18,9 @@ import logging
 import asyncio
 
 import requests
-
+        
+request_queue = asyncio.Queue()
+semaphore = asyncio.Semaphore(5)
 app = FastAPI()
 
 controller = None
@@ -30,6 +32,9 @@ class CompletionRequest(BaseModel):
     max_tokens: int
     stream: bool
     ignore_eos: bool
+    
+class GenerateRequest(BaseModel):
+    pass
 
 
 class BatchCompletionRequest(BaseModel):
@@ -51,9 +56,7 @@ async def register_nodes(nodeInfo: NodeInfo):
 @app.post("/generate")
 async def generate(req: Request):
     req_json = await req.json()
-    # print(isinstance(req_json, list))
-    # if not isinstance(req_json, list):
-        # req_json = [req_json]  # 将单个对象转换为列表
+    print(req_json)
 
     requests = [CompletionRequest(**req_json)]
     if controller is not None:
@@ -65,6 +68,7 @@ async def generate(req: Request):
 @app.post("/v1/completions")
 async def openai_v1_completions(req: Request):
     req_json = await req.json()
+    
     # print(isinstance(req_json, list))
     # if not isinstance(req_json, list):
         # req_json = [req_json]  # 将单个对象转换为列表

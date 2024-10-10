@@ -59,6 +59,7 @@ class Controller:
         self.context = zmq.Context(2)
         
         self.log_step = 10
+
         
         
     def add_new_node(self, nodeInfo:NodeInfo):
