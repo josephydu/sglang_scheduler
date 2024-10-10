@@ -13,7 +13,7 @@ import logging
 import threading
 import random
 logger = logging.getLogger(__name__)
-AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(total=6 * 60 * 60)
+AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(total=60 * 60 * 60)
 
 
 class LoadBalanceMethod(Enum):
