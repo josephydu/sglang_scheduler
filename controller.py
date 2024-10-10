@@ -49,7 +49,8 @@ class Controller:
         
         self.round_robin_counter = 0
         dispatch_lookup = {
-            LoadBalanceMethod.ROUND_ROBIN: self.round_robin_scheduler
+            LoadBalanceMethod.ROUND_ROBIN: self.round_robin_scheduler,
+            LoadBalanceMethod.POWER_OF_2_CHOICE: self.power_of_2_choice_scheduler
         }
         
         self.dispatching = dispatch_lookup[self.load_balance_method]
@@ -81,7 +82,7 @@ class Controller:
                 pass
         
     #change it to send requests to nodes.
-    async def round_robin_scheduler(self, input_requests, base_url):
+    async def power_of_2_choice_scheduler(self, input_requests, base_url):
         if self.input_requests == 0 or self.node_list == 0:
             return 
         async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
