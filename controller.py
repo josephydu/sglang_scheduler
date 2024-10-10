@@ -173,12 +173,11 @@ class Controller:
                             run / wait for run, wait in zip(num_reqs_running, num_reqs_waiting)
                         ]
                         # run越大 认为后续释放的可能性越多，wait越少，说明后续计算能力更强
-                        min_value = max(ratio)
+                        max_value = max(ratio)
                         # 找到所有最小值的索引
-                        min_indices = [i for i, x in enumerate(ratio) if x == min_value]
+                        max_indices = [i for i, x in enumerate(ratio) if x == max_value]
                         # 从这些索引中随机选择一个
-                        index = random.choice(min_indices)
-                        # 从waitting最小的找到available最大的
+                        index = random.choice(max_indices)
                     else:
                         # 选出不waiting的且available mem最大的
                         # no_waiting 和available做乘法，找最大
@@ -186,6 +185,7 @@ class Controller:
                         filter_result = [a * b for a, b in zip(no_waiting, available_mem)]
                         index = filter_result.index(max(filter_result))
                     target_node = nodes_list[index]
+                    logger.info(f"[resources_aware_scheduler]choose {target_node}")
 
                 url = f'http://{target_node}/{base_url}'
                 
