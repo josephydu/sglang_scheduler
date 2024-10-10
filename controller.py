@@ -10,8 +10,7 @@ from fastapi.responses import StreamingResponse
 import aiohttp
 import logging
 
-from multiprocessing import Process
-
+import threading
 logger = logging.getLogger(__name__)
 AIOHTTP_TIMEOUT = aiohttp.ClientTimeout(total=6 * 60 * 60)
 
@@ -64,7 +63,7 @@ class Controller:
             recv_controller_info.connect(f'tcp://{nodeInfo.ip}:{nodeInfo.controller_info_port}')
             
             # start a new process, call the function recv_controller_info_loop
-            proc = Process(target=self.recv_controller_info_loop, args=(recv_controller_info,))
+            proc = threading.Thread(target=self.recv_controller_info_loop, args=(recv_controller_info,))
             proc.start()
             self.recv_controller_procs.append(proc)
             
