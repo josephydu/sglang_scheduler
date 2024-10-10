@@ -83,7 +83,7 @@ class Controller:
         
     #change it to send requests to nodes.
     async def round_robin_scheduler(self, input_requests, base_url):
-        if self.input_requests == 0 or self.node_list == 0:
+        if input_requests == 0 or self.node_list == 0:
             return 
         async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
             for req in input_requests:
@@ -101,7 +101,7 @@ class Controller:
                         yield b''  # 返回空字节，表示错误或无数据
 
     async def power_of_2_choice_scheduler(self, input_requests, base_url):
-        if self.input_requests == 0 or self.node_list == 0 or len(self.controller_info_dict) == 0:
+        if input_requests == 0 or self.node_list == 0 or len(self.controller_info_dict) == 0:
             return 
         async with aiohttp.ClientSession(timeout=AIOHTTP_TIMEOUT) as session:
             for req in input_requests:
