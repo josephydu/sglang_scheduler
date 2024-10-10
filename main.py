@@ -49,16 +49,22 @@ async def register_nodes(nodeInfo: NodeInfo):
     return JSONResponse({"message": "Register nodes SUCCESS to the controller."})
 
 @app.post("/generate")
-async def handle_request(batch_req: BatchCompletionRequest):
+async def generate(req: Request):
+    req_json = await req.json()
+    # print(isinstance(req_json, list))
+    # if not isinstance(req_json, list):
+        # req_json = [req_json]  # 将单个对象转换为列表
+
+    requests = [CompletionRequest(**req_json)]
     if controller is not None:
         base_url = "generate"
-        return await controller.dispatching(batch_req, base_url)
+        return await controller.dispatching(requests, base_url)
     else:
         return None
     
 @app.post("/v1/completions")
-async def openai_v1_completions(batch_req: Request):
-    req_json = await batch_req.json()
+async def openai_v1_completions(req: Request):
+    req_json = await req.json()
     # print(isinstance(req_json, list))
     # if not isinstance(req_json, list):
         # req_json = [req_json]  # 将单个对象转换为列表
@@ -105,4 +111,7 @@ if __name__ == "__main__":
     
     controller = Controller(server_args=server_args)
     
-    launch_server(server_args)
+    try:
+        launch_server(server_args)
+    finally:
+        del controller
