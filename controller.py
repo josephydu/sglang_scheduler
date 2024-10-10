@@ -140,5 +140,5 @@ class Controller:
             proc.terminate()
             proc.join()
         
-        self.context.term()
+        # self.context.term()
         
