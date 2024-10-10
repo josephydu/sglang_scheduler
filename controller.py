@@ -78,7 +78,7 @@ class Controller:
             try:
                 recv_controller_info_str = recv_controller_info.recv_string(zmq.NOBLOCK)
                 if recv_controller_info_str is not None and recv_controller_info_str != "":
-                    logger.info(f'[recv_controller_info_loop]{recv_controller_info_str}')
+                    # logger.info(f'[recv_controller_info_loop]{recv_controller_info_str}')
                     ip, port, avaliable_memory, num_running, num_waitting = recv_controller_info_str.split(",")
                     self.controller_info_dict[f'{ip}:{port}'] = (int(avaliable_memory), int(num_running), int(num_waitting))
             except zmq.Again:
